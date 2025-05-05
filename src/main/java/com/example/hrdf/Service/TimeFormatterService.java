@@ -2,6 +2,8 @@ package com.example.hrdf.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 
@@ -14,9 +16,8 @@ public class TimeFormatterService {
     static final int SECONDS_IN_YEAR = 365 * SECONDS_IN_DAY;
 
     public String formatTime(int seconds) {
-        List<String> components = new ArrayList<>();
-
-        if (seconds == 0) return "now";
+        if (seconds == 0)
+            return "now";
 
         int years = seconds / SECONDS_IN_YEAR;
         seconds %= SECONDS_IN_YEAR;
@@ -30,12 +31,14 @@ public class TimeFormatterService {
         int minutes = seconds / SECONDS_IN_MINUTES;
         seconds %= SECONDS_IN_MINUTES;
 
-        if (years > 0) components.add(formatUnit(years, "year"));
-        if (days > 0) components.add(formatUnit(days, "day"));
-        if (hours > 0) components.add(formatUnit(hours, "hour"));
-        if (minutes > 0) components.add(formatUnit(minutes, "minute"));
-        if (seconds > 0) components.add(formatUnit(seconds, "second"));
-
+        List<String> components = Stream.of(
+                years > 0 ? formatUnit(years, "year") : null,
+                days > 0 ? formatUnit(days, "day") : null,
+                hours > 0 ? formatUnit(hours, "hour") : null,
+                minutes > 0 ? formatUnit(minutes, "minute") : null,
+                seconds > 0 ? formatUnit(seconds, "second") : null)
+                .filter(Objects::nonNull)
+                .toList();
 
         return formatComponents(components);
     }
@@ -50,8 +53,9 @@ public class TimeFormatterService {
         } else if (components.size() == 2) {
             return components.get(0) + " and " + components.get(1);
         } else {
-            String lastComponent = components.remove(components.size() - 1);
-            return String.join(", ", components) + " and " + lastComponent;
+            List<String> mutableComponents = new ArrayList<>(components);
+            String lastComponent = mutableComponents.remove(mutableComponents.size() - 1);
+            return String.join(", ", mutableComponents) + " and " + lastComponent;
         }
     }
 
