@@ -1,5 +1,6 @@
 package com.example.hrdf.RestController;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/time")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class TimeFormatterRestController {
 
     private final TimeFormatterService timeFormatterService;
